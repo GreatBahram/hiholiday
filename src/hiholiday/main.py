@@ -1,8 +1,8 @@
 import sys
 import argparse
 
-from api import HiHoliday
-from __version__ import version
+from hiholiday.api import HiHoliday
+from hiholiday.__version__ import version
 
 def main():
     parser = argparse.ArgumentParser(
