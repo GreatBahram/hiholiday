@@ -6,7 +6,7 @@ from hiholiday.__version__ import version
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Simple CLI for HiHoliday (airplane booking) website.',
+        description='Simple CLI for HiHoliday (airline booking) website.',
     )
     parser.add_argument(
         "--version", action="version", version=f"%(prog)s {version}"
