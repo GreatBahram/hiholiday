@@ -88,7 +88,7 @@ Flight = collections.namedtuple(
 
 
 class HiHoliday:
-    MAIN_URL = "http://hiholiday.ir/Flight/"
+    MAIN_URL = "http://hiholiday.ir/Flight"
 
     @property
     def cities(self):
@@ -106,7 +106,7 @@ class HiHoliday:
         url = "/".join([self.MAIN_URL, "oneway", route, departure_date, "1"])
         data = self._download(url)
         flights = self._parse(data)
-        return flights
+        return (flights, url)
 
     def _download(self, url):
         response = requests.get(url)

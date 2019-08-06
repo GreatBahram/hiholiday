@@ -14,7 +14,7 @@ def search(frm, to, date, capacity, verbose=False):
     [X] - justify columns.
     """
     hh = HiHoliday()
-    flights = hh.search_onway(frm, to, date, capacity)
+    flights, url = hh.search_onway(frm, to, date, capacity)
     if verbose:
         formatstr = "{:<40s} {:^8s} {:^8s} {:^8s} {:^8} {:^7}"
     else:
@@ -27,6 +27,7 @@ def search(frm, to, date, capacity, verbose=False):
         print(formatstr.format(
             f.airline, f.aircraft, f.flightno, f.time.strftime('%H:%M'), f.capacity, f.price))
     print('-' * len(headers))
+    print(f"URL: {url}")
 
 
 # The main entry point.
