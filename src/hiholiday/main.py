@@ -11,19 +11,22 @@ def search(frm, to, date, capacity, verbose=False):
     """ List oneway flights.
     # TODO:
     [] - add url link at the bottom of the cli.
-    [] - justify columns.
+    [X] - justify columns.
     """
     hh = HiHoliday()
     flights = hh.search_onway(frm, to, date, capacity)
     if verbose:
-        formatstr = "{} {} {} {} {} {}"
+        formatstr = "{:<40s} {:^8s} {:^8s} {:^8s} {:^8} {:^7}"
     else:
-        formatstr = "{} {}"
-    print(formatstr.format("Airline", "AirCraft", "FlightNo", "Time", "Capacity", "Price"))
-    print(formatstr.format("-------", "--------", "--------", "----", "--------", "-----"))
+        formatstr = "{:<40s} {:^8}"
+    headers = formatstr.format("Airline", "AirCraft", "FlightNo", "Time", "Capacity", "Price")
+    print('-' * len(headers))
+    print(headers)
+    print('-' * len(headers))
     for f in flights:
         print(formatstr.format(
-            f.airline, f.aircraft, f.flightno, f.time, f.capacity, f.price))
+            f.airline, f.aircraft, f.flightno, f.time.strftime('%H:%M'), f.capacity, f.price))
+    print('-' * len(headers))
 
 
 # The main entry point.
