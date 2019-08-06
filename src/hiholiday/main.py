@@ -1,10 +1,11 @@
 """Command Line Interface (CLI) for HiHoliday project."""
 
-import sys
 import argparse
+import sys
+from difflib import get_close_matches
 
-from hiholiday.api import HiHoliday
 from hiholiday.__version__ import version
+from hiholiday.api import HiHoliday
 
 
 def search(frm, to, date, capacity, verbose=False):
@@ -40,18 +41,16 @@ def search(frm, to, date, capacity, verbose=False):
     print(f"URL: {url}")
 
 
-def translate(city=None):
-    """
-    Return an IATA code for given city.
-    [] - add --similar to find out easily.
-    """
+def translate(city=None, similar=True):
+    """ Return an IATA code for given city. """
     hh = HiHoliday()
-    formatstr = "{:^9s}"
+    if similar:
+        possible_cities = get_close_matches(city, hh.cities)
+        if possible_cities:
+            city  = possible_cities[0]
     iata_code = hh.code(city)
     if iata_code:
-        print(formatstr.format("IATA code"))
-        print("---------")
-        print(formatstr.format(iata_code))
+        print(f"* {city.title()}: {iata_code}")
     else:
         print("Not found", file=sys.stderr)
         raise SystemExit(1)
@@ -107,6 +106,12 @@ def main():
         type=str,
         help="City name."
     )
+    t.add_argument(
+        "--no-similar",
+        default=True,
+        action='store_false',
+        help="Prevent it from finding the best “good enough” match."
+    )
     t.set_defaults(op="translate")
 
     if len(sys.argv) < 2:
@@ -117,7 +122,7 @@ def main():
     if args.op == "search":
         search(args.frm, args.to, args.date, args.capacity, args.verbose)
     elif args.op == 'translate':
-        translate(args.city)
+        translate(args.city, args.no_similar)
 
 
 if __name__ == "__main__":
