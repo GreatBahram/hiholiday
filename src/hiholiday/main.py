@@ -41,7 +41,10 @@ def search(frm, to, date, capacity, verbose=False):
 
 
 def translate(city=None):
-    """ Return an IATA code for given city."""
+    """
+    Return an IATA code for given city.
+    [] - add --similar to find out easily.
+    """
     hh = HiHoliday()
     formatstr = "{:^9s}"
     iata_code = hh.code(city)
