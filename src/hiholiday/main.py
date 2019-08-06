@@ -1,11 +1,12 @@
 """Command Line Interface (CLI) for HiHoliday project."""
 
 import argparse
+import datetime
 import sys
 from difflib import get_close_matches
 
 from hiholiday.__version__ import version
-from hiholiday.api import HiHoliday
+from hiholiday.api import DATE_FMT, HiHoliday
 
 
 def search(frm, to, date, capacity, verbose=False):
@@ -17,7 +18,7 @@ def search(frm, to, date, capacity, verbose=False):
     hh = HiHoliday()
     flights, url = hh.search_onway(frm, to, date, capacity)
     if verbose:
-        formatstr = "{:<40s} {:^8s} {:^8s} {:^8s} {:^8} {:^7}"
+        formatstr = "{:<40s} {:^8s} {:<8s} {:^8s} {:^8} {:^7}"
     else:
         formatstr = "{:<40s} {:^8}"
     headers = formatstr.format(
@@ -93,6 +94,11 @@ def main():
         help="Maximum flight's price."
     )
     s.add_argument(
+        "--days",
+        type=int,
+        help="Days from now."
+    )
+    s.add_argument(
         "--verbose",
         action="store_true",
         help="Verbose mode."
@@ -120,7 +126,12 @@ def main():
 
     args = parser.parse_args()
     if args.op == "search":
-        search(args.frm, args.to, args.date, args.capacity, args.verbose)
+        if args.days:
+            date = datetime.datetime.now() + datetime.timedelta(days=args.days)
+            date = date.strftime(DATE_FMT)
+        else:
+            date = args.date
+        search(args.frm, args.to, date, args.capacity, args.verbose)
     elif args.op == 'translate':
         translate(args.city, args.no_similar)
 
