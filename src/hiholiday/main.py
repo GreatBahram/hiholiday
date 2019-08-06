@@ -18,26 +18,37 @@ def search(frm, to, date, capacity, verbose=False):
     hh = HiHoliday()
     flights, url = hh.search_onway(frm, to, date, capacity)
     if verbose:
-        formatstr = "{:<40s} {:^8s} {:<8s} {:^8s} {:^8} {:^7}"
+        formatstr = "{:<40s} {:^8s} {:<8s} {:^5s} {:^3} {:<9}"
     else:
-        formatstr = "{:<40s} {:^8}"
+        formatstr = "{:<40s} {:^5} {:^3} {:<9}"
     headers = formatstr.format(
-        "Airline", "AirCraft", "FlightNo", "Time", "Capacity", "Price"
+        "Airline", "Time", "Cap", "Price", "AirCraft", "FlightNo"
     )
     print("-" * len(headers))
     print(headers)
     print("-" * len(headers))
     for f in flights:
-        print(
-            formatstr.format(
-                f.airline,
-                f.aircraft,
-                f.flightno,
-                f.time.strftime("%H:%M"),
-                f.capacity,
-                f.price,
+        if verbose:
+            print(
+                formatstr.format(
+                    f.airline,
+                    f.aircraft,
+                    f.flightno,
+                    f.time.strftime("%H:%M"),
+                    f.capacity,
+                    "{:,}".format(int(f.price)),
+                )
             )
-        )
+        else:
+            print(
+                formatstr.format(
+                    f.airline,
+                    f.time.strftime("%H:%M"),
+                    f.capacity,
+                    "{:,}".format(int(f.price)),
+                )
+            )
+
     print("-" * len(headers))
     print(f"URL: {url}")
 
