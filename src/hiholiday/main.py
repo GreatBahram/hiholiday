@@ -19,15 +19,39 @@ def search(frm, to, date, capacity, verbose=False):
         formatstr = "{:<40s} {:^8s} {:^8s} {:^8s} {:^8} {:^7}"
     else:
         formatstr = "{:<40s} {:^8}"
-    headers = formatstr.format("Airline", "AirCraft", "FlightNo", "Time", "Capacity", "Price")
-    print('-' * len(headers))
+    headers = formatstr.format(
+        "Airline", "AirCraft", "FlightNo", "Time", "Capacity", "Price"
+    )
+    print("-" * len(headers))
     print(headers)
-    print('-' * len(headers))
+    print("-" * len(headers))
     for f in flights:
-        print(formatstr.format(
-            f.airline, f.aircraft, f.flightno, f.time.strftime('%H:%M'), f.capacity, f.price))
-    print('-' * len(headers))
+        print(
+            formatstr.format(
+                f.airline,
+                f.aircraft,
+                f.flightno,
+                f.time.strftime("%H:%M"),
+                f.capacity,
+                f.price,
+            )
+        )
+    print("-" * len(headers))
     print(f"URL: {url}")
+
+
+def translate(city=None):
+    """ Return an IATA code for given city."""
+    hh = HiHoliday()
+    formatstr = "{:^9s}"
+    iata_code = hh.code(city)
+    if iata_code:
+        print(formatstr.format("IATA code"))
+        print("---------")
+        print(formatstr.format(iata_code))
+    else:
+        print("Not found", file=sys.stderr)
+        raise SystemExit(1)
 
 
 # The main entry point.
@@ -73,6 +97,15 @@ def main():
     )
     s.set_defaults(op="search")
 
+    # `translate` command
+    t = subparsers.add_parser("translate", help="Translate cityname to IATA code.")
+    t.add_argument(
+        "city",
+        type=str,
+        help="City name."
+    )
+    t.set_defaults(op="translate")
+
     if len(sys.argv) < 2:
         parser.print_help()
         parser.exit()
@@ -80,6 +113,8 @@ def main():
     args = parser.parse_args()
     if args.op == "search":
         search(args.frm, args.to, args.date, args.capacity, args.verbose)
+    elif args.op == 'translate':
+        translate(args.city)
 
 
 if __name__ == "__main__":
