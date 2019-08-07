@@ -19,11 +19,12 @@ def search(frm, to, date, capacity, verbose=False):
     flights, url = hh.search_onway(frm, to, date, capacity)
     if verbose:
         formatstr = "{:<40s} {:^8s} {:<8s} {:^5s} {:^3} {:<9}"
+        headers = formatstr.format(
+            "Airline", "AirCraft", "FlightNo", "Time", "Cap", "Price",
+        )
     else:
         formatstr = "{:<40s} {:^5} {:^3} {:<9}"
-    headers = formatstr.format(
-        "Airline", "Time", "Cap", "Price", "AirCraft", "FlightNo"
-    )
+        headers = formatstr.format("Airline", "Time", "Cap", "Price")
     print("-" * len(headers))
     print(headers)
     print("-" * len(headers))
