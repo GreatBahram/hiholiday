@@ -80,6 +80,20 @@ FLIGHT_CITIES_CODES = {
     "zanjan": "JWN",
 }
 DATE_FMT = "%Y-%m-%d"
+AIRLINE_TRANSLATE = {
+    "کاسپین ایر": "Caspian Airline",
+    "ایران آسمان": "Air Aseman",
+    "ایران آسمان": "Aseman Airline",
+    "تابان ایر": "Taban Airline",
+    "ایران ایرتور": "Iran AirTour",
+    "ساها ایر": "Saha Air",
+    "معراج": "Meraj",
+    "زاگرس ایر": "Zagros Air",
+    "آتا": "ATA Airlines",
+    "ماهان ایر": "Mahan Air",
+    "وارش": "Varesh Airline",
+    "ایران ایر": "Iran Air",
+}
 
 
 Flight = collections.namedtuple(
@@ -138,6 +152,11 @@ class HiHoliday:
             info = row.select_one("span")
 
             airline = info.get("data-sort-airline", "")
+            if airline:
+                airline, sep, remainder = airline.partition("(")
+                airline = airline.rstrip()
+                airline = AIRLINE_TRANSLATE.get(airline, airline)
+                airline = " ".join([airline, sep + remainder])
             aircraft = info.get("data-aircraft")
             flightno = info.get("data-sort-flightno", "")
             time = info.get("data-sort-time", "")
