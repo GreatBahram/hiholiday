@@ -9,14 +9,14 @@ from hiholiday.__version__ import version
 from hiholiday.api import DATE_FMT, HiHoliday
 
 
-def search(frm, to, date, capacity, verbose=False):
+def search(frm, to, date, capacity, days=0, verbose=False):
     """ List oneway flights.
     # TODO:
     [] - add url link at the bottom of the cli.
     [X] - justify columns.
     """
     hh = HiHoliday()
-    flights, url = hh.search_onway(frm, to, date, capacity)
+    flights, url = hh.search_onway(frm, to, capacity, date, days)
     if verbose:
         formatstr = "{:<40s} {:^8s} {:<8s} {:^5s} {:^3} {:<9}"
         headers = formatstr.format(
@@ -108,6 +108,7 @@ def main():
     s.add_argument(
         "--days",
         type=int,
+        default=0,
         help="Days from now."
     )
     s.add_argument(
@@ -138,12 +139,7 @@ def main():
 
     args = parser.parse_args()
     if args.op == "search":
-        if args.days:
-            date = datetime.datetime.now() + datetime.timedelta(days=args.days)
-            date = date.strftime(DATE_FMT)
-        else:
-            date = args.date
-        search(args.frm, args.to, date, args.capacity, args.verbose)
+        search(args.frm, args.to, args.date, args.capacity, args.days, args.verbose)
     elif args.op == 'translate':
         translate(args.city, args.no_similar)
 

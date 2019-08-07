@@ -98,12 +98,26 @@ class HiHoliday:
         return FLIGHT_CITIES_CODES.get(city.lower())
 
     def search_onway(
-        self, departure_code, arrival_code, departure_date=None, capacity=1
+        self, departure_code, arrival_code, capacity=1, departure_date=None, days=0
     ):
-        if departure_date is None:
-            departure_date = datetime.datetime.today().strftime(DATE_FMT)
+        if departure_date:
+            if isinstance(departure_date, str):
+                try:
+                    departure_date = datetime.datetime.strptime(
+                        departure_date, DATE_FMT
+                    )
+                except Exception:
+                    raise ValueError("Invalid Date")
+        else:
+            departure_date = datetime.datetime.today()
+        if days and days < 1:
+            raise ValueError("Days cannot be negative")
+
+        departure_date = departure_date + datetime.timedelta(days=days)
+        departure_date_str = departure_date.strftime(DATE_FMT)
+
         route = departure_code + "-" + arrival_code
-        url = "/".join([self.MAIN_URL, "oneway", route, departure_date, "1"])
+        url = "/".join([self.MAIN_URL, "oneway", route, departure_date_str, "1"])
         data = self._download(url)
         flights = self._parse(data)
         return (flights, url)
