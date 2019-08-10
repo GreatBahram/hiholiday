@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-import datetime
 import collections
+import datetime
+import re
 
 import requests
-
 from bs4 import BeautifulSoup
 
 __all__ = ["HiHoliday"]
@@ -80,20 +80,6 @@ FLIGHT_CITIES_CODES = {
     "zanjan": "JWN",
 }
 DATE_FMT = "%Y-%m-%d"
-AIRLINE_TRANSLATE = {
-    "کاسپین ایر": "Caspian Airline",
-    "ایران آسمان": "Air Aseman",
-    "ایران آسمان": "Aseman Airline",
-    "تابان ایر": "Taban Airline",
-    "ایران ایرتور": "Iran AirTour",
-    "ساها ایر": "Saha Air",
-    "معراج": "Meraj",
-    "زاگرس ایر": "Zagros Air",
-    "آتا": "ATA Airlines",
-    "ماهان ایر": "Mahan Air",
-    "وارش": "Varesh Airline",
-    "ایران ایر": "Iran Air",
-}
 
 
 Flight = collections.namedtuple(
@@ -152,12 +138,9 @@ class HiHoliday:
             info = row.select_one("span")
 
             airline = info.get("data-sort-airline", "")
-            if airline:
-                airline, sep, remainder = airline.partition("(")
-                airline = airline.rstrip()
-                airline = AIRLINE_TRANSLATE.get(airline, airline)
-                airline = " ".join([airline, sep + remainder])
-            aircraft = info.get("data-aircraft")
+            airline, aircraft = self._parse_airline(airline)
+            if not airline:
+                aircraft = info.get("data-aircraft")
             flightno = info.get("data-sort-flightno", "")
             time = info.get("data-sort-time", "")
             capacity = info.get("data-sort-capacity", 0)
@@ -170,3 +153,33 @@ class HiHoliday:
             flights.append(Flight(airline, aircraft, flightno, time, capacity, price))
 
         return flights
+
+    def _parse_airline(self, airline):
+        """ Translate airline Persian names to English and return aircraft type."""
+        aircraft = None
+        airline_translate = {
+            "کاسپین ایر": "Caspian Airlines",
+            "کارون ایر": "Karun Airlines",
+            "ایران آسمان": "Air Aseman Airlines",
+            "ایران آسمان": "Aseman Airlines",
+            "تابان ایر": "Taban Airlines",
+            "ایران ایرتور": "Iran Airtour Airline",
+            "ساها ایر": "Saha Airlines",
+            "معراج": "Meraj Airlines",
+            "زاگرس ایر": "Zagros Airlines",
+            "آتا": "ATA Airlines",
+            "ماهان ایر": "Mahan Air",
+            "وارش": "Varesh Airline",
+            "قشم ایر": "Qeshm Airlines",
+            "ایران ایر": "Iran Air",
+        }
+        if airline:
+            airline, sep, remainder = airline.partition("(")
+            airline = airline.rstrip()
+            airline = airline_translate.get(airline, airline)
+            airline = " ".join([airline, sep + remainder])
+
+            match = re.search(r"(.*) \((.*)\)", airline)
+            if match:
+                airline, aircraft = match.groups()
+        return (airline, aircraft)

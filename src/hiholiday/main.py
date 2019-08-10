@@ -10,20 +10,16 @@ from hiholiday.api import DATE_FMT, HiHoliday
 
 
 def search(frm, to, date, capacity, days=0, verbose=False):
-    """ List oneway flights.
-    # TODO:
-    [] - add url link at the bottom of the cli.
-    [X] - justify columns.
-    """
+    """ List oneway flights."""
     hh = HiHoliday()
     flights, url = hh.search_onway(frm, to, capacity, date, days)
     if verbose:
-        formatstr = "{:<40s} {:^8s} {:<8s} {:^5s} {:^3} {:<9}"
+        formatstr = "{:<22s} {:^8s} {:<8s} {:^5s} {:^3} {:<9}"
         headers = formatstr.format(
             "Airline", "AirCraft", "FlightNo", "Time", "Cap", "Price",
         )
     else:
-        formatstr = "{:<40s} {:^5} {:^3} {:<9}"
+        formatstr = "{:<22s} {:^5} {:^3} {:<9}"
         headers = formatstr.format("Airline", "Time", "Cap", "Price")
     print("-" * len(headers))
     print(headers)
