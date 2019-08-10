@@ -184,4 +184,14 @@ class HiHoliday:
             match = re.search(r"(.*) \((.*)\)", airline)
             if match:
                 airline, aircraft = match.groups()
-        return (airline, aircraft)
+        return (airline, self._parse_aircraft(aircraft))
+
+    def _parse_aircraft(self, aircraft):
+        if aircraft.strip() == 'نامشخص':
+            return 'Unspecified'
+        else:
+            output = ''
+            for char in aircraft:
+                if ord(char) < 256:
+                    output += char
+            return ' '.join(output.split())
