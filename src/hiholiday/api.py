@@ -172,6 +172,8 @@ class HiHoliday:
             "وارش": "Varesh Airline",
             "قشم ایر": "Qeshm Airlines",
             "ایران ایر": "Iran Air",
+            "پویا ایر": "Pouya Air",
+            "کیش ایر": "Kish Air",
         }
         if airline:
             airline, sep, remainder = airline.partition("(")
