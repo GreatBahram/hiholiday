@@ -9,7 +9,7 @@ Click==7.0
 idna==2.8
 isort==4.3.21
 jdatetime==3.4.0
-lxml==4.4.0
+lxml==4.9.1
 pkg-resources==0.0.0
 prettytable==0.7.2
 requests==2.22.0
